@@ -5,9 +5,10 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 
-// sendgrid config
+// Import the SendGrid SDK
 import * as sgMail from "@sendgrid/mail";
 
+// Get the apikey nad the tempalte id from firebase config as to not show them publicly
 const API_KEY = functions.config().sendgrid.key;
 const TEMPLATE_ID = functions.config().sendgrid.template;
 sgMail.setApiKey(API_KEY);
@@ -16,6 +17,8 @@ export const newQuoteRequest = functions.firestore
     .document("Messages/{quoteId}")
     .onCreate(async (change, context) => {
       const data = change.data();
+
+      // The confirmation to send to the customer after submiting the form
       const msg = {
         from: "youssef@lasheen.dev",
         to: data.email,
@@ -24,7 +27,7 @@ export const newQuoteRequest = functions.firestore
           "name": data.name,
         },
       };
-
+      // The message to send to me with the details of the form
       const msg1 = {
         from: "youssef@lasheen.dev",
         to: "youssef@lasheen.dev",
